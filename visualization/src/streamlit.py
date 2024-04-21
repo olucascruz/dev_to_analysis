@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import utils
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 
 @st.cache_data
 def load_data():
@@ -16,17 +14,22 @@ def load_data():
 def main():
     st.set_page_config(layout="wide", page_title= "dev.to top week")
 
-    with open( "style.css" ) as css:
-        st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+    try:
+        with open( "style.css" ) as css:
+            st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+    except Exception as ex:
+        print(ex)
+        st.write("without css file")
+        return
 
-    # Create a text element and let the reader know the data is loading.
     data_load_state = st.text('Loading data...')
 
     data = load_data()
     if data is None: return
 
+    # If the article does not have tags, convert 'nan' to an empty string.
     data["tags"] = data["tags"].apply(lambda x: '' if isinstance(x, (int, float)) else x)
-    # Notify the reader that the data was successfully loaded.
+
     data_load_state.text("")
     col1, col2= st.columns(spec=[0.5,0.5])
 
@@ -65,50 +68,19 @@ def main():
         sizes = [tag[1] for tag in sorted_tags]
 
         st.write(f"TAGS: {tags_most_reacted}")
-        
-        for _ in range(4):
-            st.markdown('##')
-
+        utils.add_blank_spaces(st, num_spaces=4)
         st.markdown(f"# **Tag com maior frequência:** {labels[0]}")
     
         st.markdown("## **As tags mais frequentes**")
 
-    
         # Create the bar chart
-        figure = plt.figure(figsize=(10, 6))
-        bars = plt.bar(labels, sizes, color='skyblue')
-
-        # Add labels and title
-        plt.xlabel('Tags')
-        plt.ylabel('Occurrences')
-        plt.title('Tag Distribution')
-
-        # Rotate x-axis labels for better readability
-        plt.xticks(rotation=45, ha='right')
-
-        for bar, size in zip(bars, sizes):
-            plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), str(size), ha='center', va='bottom')
-
-        # Display the chart
-        plt.tight_layout()
-        st.pyplot(figure)
-
+        utils.plot_bar_chart(st=st, labels=labels, sizes=sizes, title="Tag Distribution", xlabel="Tags", ylabel="Occurrences")
+        
         words_list = data["tags"]
         text = ' '.join(words_list)
 
-        # Generate a word cloud object
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
-
-        try:
-            # Plot the word cloud
-            figure = plt.figure(figsize=(10, 5))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis('off')
-            st.pyplot(figure)
-        except Exception as ex:
-            print(wordcloud)
-            print("ex: ",ex)
-
+        utils.plot_wordcloud(st, words=text)
+        
     with col2:
         column_minutes_to_read = data["minutes_to_read"]
         mean_minutes_to_read = column_minutes_to_read.mean()
@@ -138,29 +110,16 @@ def main():
         for label in labels:
             tags_most_commented += f"#{label} "
 
-
         st.write(f"TAGS: {tags_most_commented}")
-
-        for _ in range(6):
-            st.markdown('##')
-
+        utils.add_blank_spaces(st, num_spaces=6)
         st.markdown("\n")
-
 
         st.markdown("## **Palavras mais frequentes nos títulos**")
         # Convert the list to a single string with space-separated words
         words_list = data["title"]
-        text = ' '.join(words_list)
-        # Generate a word cloud object
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        titles = ' '.join(words_list)
+        
+        utils.plot_wordcloud(st, words=titles)
 
-        try:
-            figure =plt.figure(figsize=(20, 10))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis('off')
-            st.pyplot(figure)
-        except Exception as ex:
-            print(ex)
-            print(wordcloud)
 if __name__ ==  '__main__':
     main()
