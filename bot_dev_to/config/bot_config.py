@@ -36,3 +36,5 @@ def webbot_config(webbot:WebBot, headless:bool=False)-> None:
     def_options.add_argument("--inprivate")
     # Update the options to use the customized Options.
     webbot.options = def_options
+    
+    return webbot
