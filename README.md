@@ -33,8 +33,34 @@ na Pasta bot_dev_to
 
 python bot.py
 
-na Pasta visualizatin\src
+na Pasta visualization\src
 
 streamlit run streamlit.py
 
+```
+
+## Project Tree
+```
+dev_to_analysis
+├─ .gitignore
+├─ bot_dev_to
+│  ├─ analysis.ipynb
+│  ├─ bot.py
+│  ├─ bot_dev_to.botproj
+│  ├─ build.bat
+│  ├─ build.ps1
+│  ├─ build.sh
+│  ├─ config
+│  │  └─ bot_config.py
+│  ├─ resources
+│  │  └─ start.png
+│  ├─ results
+│  └─ scraping_data.py
+├─ README.md
+├─ requirements.txt
+└─ visualization
+   └─ src
+      ├─ streamlit.py
+      ├─ style.css
+      └─ utils.py
 ```
