@@ -1,5 +1,5 @@
 # Dev.to analysis
-> Bot faz scraping no dev.to pegando os artigos mais populares da semana e gera um csv com esses dados. <br>
+> Bot faz web scraping no site [dev.to](https://dev.to/) pegando os dados dos artigos mais populares da semana e gera um csv com esses dados. <br>
 > Gera um painel com os dados obtidos do site.
 
 
